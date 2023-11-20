@@ -12,21 +12,30 @@ export default function Canvas({ width, height }) {
         const ctx = canvas.getContext("2d");
         
         // fit borders into canvas
-        const cityWidth = borders.bounds.maxlon - borders.bounds.minlon
-        const cityHeight = borders.bounds.maxlat - borders.bounds.minlat
-        const pxPerDeg = Math.min(width/cityWidth, height/cityHeight)
-        // ctx.fillRect(0, 0, cityWidth * pxPerDeg, cityHeight * pxPerDeg)
+        // the size of a degree of latitude is constant, but
+        // the size of a degree of longitude shrinks as you get closer to the poles (ie as a function of latitude)
+        // we will just use the middle lat to calc the size of lon
+        const kmPerDegLat = 110.574
+        const avgLat = (borders.bounds.maxlat + borders.bounds.minlat) / 2
+        const avgLatRad = avgLat * 2 * Math.PI / 360;
+        const kmPerDegLon = 111.32 * Math.cos(avgLatRad)
+        const cityWidthKM = (borders.bounds.maxlon - borders.bounds.minlon) * kmPerDegLon
+        const cityHeightKM = (borders.bounds.maxlat - borders.bounds.minlat) * kmPerDegLat
+        const pxPerKM = Math.min(width / cityWidthKM, height / cityHeightKM)
+        const pxPerDegLat = pxPerKM * kmPerDegLat
+        const pxPerDegLon = pxPerKM * kmPerDegLon
 
         function convertLat(lat) {
-            return (borders.bounds.maxlat - lat) * pxPerDeg
+            return (borders.bounds.maxlat - lat) * pxPerDegLat
         }
         function convertLon(lon) {
-            return (lon - borders.bounds.minlon) * pxPerDeg
+            return (lon - borders.bounds.minlon) * pxPerDegLon
         }
         function convertCoord(coord){
             return [convertLon(coord.lon), convertLat(coord.lat)]
         }
 
+        ctx.lineWidth = 2
         for (let way of borders.members) {
             if (way.type !== "way") continue
             if (!way.geometry) continue
