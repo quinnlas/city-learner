@@ -24,8 +24,11 @@ Since Vite is not intended to be used for locally hosted apps, they only provide
 - implement a game where roads/other features are drawn and the user can guess what they are
 - various code TODO comments
 
-Following is the README for the React + Vite template:
+# Using OpenStreetMaps
+The APIs related to OSM are very unintuitive. I have found it useful to go to the [main site](https://www.openstreetmap.org/), right click, select `Query features` and then explore the relationships between the different data types that come up. From there, attempt to put something that works into the wizard at [Overpass Turbo](https://overpass-turbo.eu/). The visualization should tell you if you got the right thing, but the `Data` tab is also useful. The query that Overpass Turbo gives you can be sent to the [Overpass API](https://wiki.openstreetmap.org/wiki/Overpass_API#Quick_Start_(60_seconds):_for_Developers/Programmers).
 
+
+Following is the README for the React + Vite template:
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
