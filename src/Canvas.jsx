@@ -1,7 +1,6 @@
 import { useEffect } from "react";
-import borders from "./mpls.json"
 
-export default function Canvas({ width, height }) {
+export default function Canvas({ borders, width, height }) {
     useEffect(() => {
         const canvas = document.getElementById("canvas")
 
