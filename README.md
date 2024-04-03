@@ -18,6 +18,12 @@ npm run pi
 ```
 Since Vite is not intended to be used for locally hosted apps, they only provide the `preview` command for running a production build locally. This is good enough for my purposes so I use that with the --host option to expose the port to outside connections (Inside the `npm run pi` script).
 
+# TODOs
+- do CSS to it
+- connect the website to my domain name [quinnlas.com](http://quinnlas.com)
+- implement a game where roads/other features are drawn and the user can guess what they are
+- various code TODO comments
+
 Following is the README for the React + Vite template:
 
 # React + Vite
