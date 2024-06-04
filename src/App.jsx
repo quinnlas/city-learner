@@ -1,11 +1,11 @@
-import CityChooser from './CityChooser'
+import CityChooser from "./CityChooser"
 
 function App() {
-  return (
-    <>
-      <CityChooser/>
-    </>
-  )
+    return (
+        <>
+            <CityChooser />
+        </>
+    )
 }
 
 export default App
