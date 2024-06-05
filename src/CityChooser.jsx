@@ -6,6 +6,7 @@ import Canvas from "./Canvas"
 export default function CityChooser() {
     const [searchText, setSearchText] = useState("")
     const [searchResults, setSearchResults] = useState([])
+    const [searched, setSearched] = useState(false)
     const [borders, setBorders] = useState(null)
     const [streets, setStreets] = useState(null)
     const [showCanvas, setShowCanvas] = useState(false)
@@ -20,6 +21,7 @@ export default function CityChooser() {
 
     async function onClickSearch() {
         setSearchResults(await searchCities(searchText))
+        setSearched(true)
     }
 
     async function onClickResult(i) {
@@ -44,14 +46,34 @@ export default function CityChooser() {
                 onKeyUp={onKeyUp}
             />
             <button onClick={onClickSearch}>Search</button>
-            <ul>
+            <ul
+                style={{
+                    listStyle: "none",
+                    paddingLeft: 0,
+                    width: "fit-content",
+                }}
+            >
                 {searchResults.map((r, i) => (
-                    // TODO prettier display than ul/li
-                    <li key={r.place_id} onClick={() => onClickResult(i)}>
+                    <li
+                        key={r.place_id}
+                        onClick={() => onClickResult(i)}
+                        style={{
+                            border: "1px solid",
+                            padding: "10px",
+                        }}
+                    >
                         {r.display_name}
                     </li>
                 ))}
             </ul>
+            {searched && !searchResults.length ? (
+                <p>
+                    No city search results were found. Please try a different
+                    search.
+                </p>
+            ) : (
+                <></>
+            )}
             {/* TODO get starting size from viewport */}
             {/* TODO some kind of app state management */}
             {/* -10 is to avoid scrollbar, not sure exact amount needed */}

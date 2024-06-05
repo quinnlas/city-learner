@@ -56,6 +56,7 @@ export async function getRoads(
 
     // the streets data is an array with a bunch of nodes and ways:
     // we want to process this efficiently before sending it to another component
+    // by putting the nodes into an object for O(1) lookups
     /*
     [
         {
