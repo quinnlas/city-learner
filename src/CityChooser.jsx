@@ -8,7 +8,7 @@ export default function CityChooser() {
     const [searchResults, setSearchResults] = useState([])
     const [borders, setBorders] = useState(null)
     const [streets, setStreets] = useState(null)
-    const [showCanvas, setShowCanvas2] = useState(false)
+    const [showCanvas, setShowCanvas] = useState(false)
 
     function onInput(e) {
         setSearchText(e.target.value)
@@ -30,47 +30,9 @@ export default function CityChooser() {
         setBorders(borderRes.data.elements[0])
 
         await new Promise((rs) => setTimeout(rs, 1000))
-        const streetsRes = await getRoads(result.osm_id)
-        const streetData = streetsRes.data.elements
-        // the streets data is an array with a bunch of nodes and ways:
-        // we want to process this efficiently before sending it to another component
-        /*
-    [
-        {
-            "type": "way",
-            "id": 1289153991,
-            "nodes": [
-                7949762772,
-                11954064929
-            ]
-        },
-        {
-            "type": "node",
-            "id": 7949762772,
-            "lat": 44.9360219,
-            "lon": -93.2739399
-        },
-        {
-            "type": "node",
-            "id": 11954064929,
-            "lat": 44.9360029,
-            "lon": -93.2739607
-        }
-    ]
-    */
-        const ways = []
-        const nodes = {}
-
-        while (streetData.length) {
-            const current = streetData.pop()
-            if (current.type == "node") {
-                nodes[current.id] = current
-            } else if (current.type == "way") {
-                ways.push(current)
-            }
-        }
-        setStreets({ ways, nodes })
-        setShowCanvas2(true)
+        const streets = await getRoads(result.osm_id)
+        setStreets(streets)
+        setShowCanvas(true)
     }
 
     return (

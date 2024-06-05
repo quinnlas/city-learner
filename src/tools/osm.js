@@ -29,7 +29,7 @@ export function getCityBorders(id) {
     )
 }
 
-export function getRoads(
+export async function getRoads(
     id,
     highway_values = [
         "motorway",
@@ -41,7 +41,7 @@ export function getRoads(
     ]
 ) {
     // add 3600000000 to get the area id: https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL#By_area_.28area.29
-    return osm.post(
+    const res = await osm.post(
         "/interpreter",
         "data=" +
             encodeURIComponent(`
@@ -53,4 +53,45 @@ export function getRoads(
       .join("\n")}
   `)
     )
+
+    // the streets data is an array with a bunch of nodes and ways:
+    // we want to process this efficiently before sending it to another component
+    /*
+    [
+        {
+            "type": "way",
+            "id": 1289153991,
+            "nodes": [
+                7949762772,
+                11954064929
+            ]
+        },
+        {
+            "type": "node",
+            "id": 7949762772,
+            "lat": 44.9360219,
+            "lon": -93.2739399
+        },
+        {
+            "type": "node",
+            "id": 11954064929,
+            "lat": 44.9360029,
+            "lon": -93.2739607
+        }
+    ]
+    */
+    const streetData = res.data.elements
+    const ways = []
+    const nodes = {}
+
+    while (streetData.length) {
+        const current = streetData.pop()
+        if (current.type == "node") {
+            nodes[current.id] = current
+        } else if (current.type == "way") {
+            ways.push(current)
+        }
+    }
+
+    return { ways, nodes }
 }
