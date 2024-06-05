@@ -1,6 +1,6 @@
-This project helps people to learn the geography of their city (or any other city). Right now, it just displays a city map, adjusted for the curvature of the Earth.
+This project helps people to learn the geography of their city (or any other city). Right now, it just displays a city map, adjusted for the curvature of the Earth, along with the major roads.
 
-It is built with React. I run the website on my Raspberry Pi, which I will connect to my domain name at some point.
+It is built with React and runs on Github Pages.
 
 # Commands
 
