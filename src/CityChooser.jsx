@@ -19,15 +19,11 @@ export default function CityChooser() {
     }
 
     async function onClickSearch() {
-        const res = await searchCities(searchText)
-        setSearchResults(res.data)
+        setSearchResults(await searchCities(searchText))
     }
 
     async function onClickResult(i) {
-        // filter out non-cities
-        // TODO filter these in displayed results
         const result = searchResults[i]
-        if (!["town", "city"].includes(result.addresstype)) return
 
         // get the city data from osm
         const borderRes = await getCityBorders(result.osm_id)

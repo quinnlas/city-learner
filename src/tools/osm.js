@@ -29,7 +29,17 @@ export function getCityBorders(id) {
     )
 }
 
-export function getRoads(id) {
+export function getRoads(
+    id,
+    highway_values = [
+        "motorway",
+        "trunk",
+        "primary",
+        "secondary",
+        "tertiary",
+        "unclassified",
+    ]
+) {
     // add 3600000000 to get the area id: https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL#By_area_.28area.29
     return osm.post(
         "/interpreter",
@@ -38,8 +48,9 @@ export function getRoads(id) {
   [timeout:900][maxsize:1073741824][out:json];
   area(${id + 3600000000});
   (._; )->.area;
-  (way[highway](area.area); node(w););
-  out skel;
+  ${highway_values
+      .map((hv) => `(way[highway=${hv}](area.area); node(w););\nout skel;`)
+      .join("\n")}
   `)
     )
 }

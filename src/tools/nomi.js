@@ -24,10 +24,25 @@ nomi.interceptors.request.use(function (config) {
     return config
 })
 
-export function searchCities(searchText) {
-    return nomi.get("/search", {
+export async function searchCities(searchText) {
+    const res = await nomi.get("/search", {
         params: {
             q: searchText,
         },
+    })
+
+    // we only want to include cities and towns as loading data for a whole county, state, country etc would not be good
+    // some cities do not have borders mapped and are just a node, we can't use those (e.g. Gothenburg)
+    // although we could potentially use the bounding box if provided
+    return res.data.filter((result) => {
+        // doesn't have borders
+        // it's possible a city could be a "way" type, but I haven't seen that
+        if (result.osm_type != "relation") return false
+
+        // determine if it's a city
+        if (["city", "town"].includes(result.type)) return true
+        if (result.addresstype == "city") return true
+
+        return false
     })
 }

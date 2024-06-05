@@ -27,3 +27,41 @@ So that gives us the order:
 -   tertiary
 -   unclassified
 -   residential
+
+Now these can give a lot of random small roads, like a service road for a highway listed at the motorway level. So I think the best way to handle this is to sort the ways by number of nodes.
+
+# OSM Notes
+
+These are some general notes about OSM that are relevant to this project.
+
+## Data Structure
+
+### Element Types
+
+All OSM data is made of elements. Elements have exactly one type:
+
+-   Node - a point with a lat/lon.
+-   Way - a connected sequence of nodes.
+    -   Closed way - a way with the same first and last node, forming a loop. This is not an element type, it's just an implicit property some ways have.
+-   Relation - A group of nodes, ways, or further relations that can be used for various purposes.
+
+### Areas
+
+Since a city is an area, they are especially important to this project.
+
+An area can be represented multiple ways. It is not an element type.
+
+-   Way - If an area can be represented by one polygon, it can be a closed way. Most closed ways are areas (the exception would be something like a roundabout, where the region inside the loop is not important). Determining if a closed way is an area or not is not important for this project.
+-   Relation - Commonly called "multipolygon". These contain exclusively ways. The ways can be "outer" or "inner", since areas can have holes in them. For our purposes, we can probably ignore inner areas.
+
+### IDs
+
+Each element type has its own type of ID, which is unique within that element type. So a node and a way can have the same ID, for example, but two nodes will have different IDs. Since closed ways and areas all still have the element type "way", they have unique IDs from each other.
+
+### Tags
+
+Any element can have tags. "A tag is a key=value pair describing what the element is." Of particular importance for this project is the key "highway", which is used to denote "highways, roads, paths, footways, cycleways, bus stops, etc". The values of this tag are also important.
+
+## Nominatim
+
+This is a search service that returns different useful information about the search matches. The main parts we want are the display_name, osm_type, and osm_id.
