@@ -13,12 +13,7 @@ npm run dev
 
 # Build for production:
 npm run build
-
-# Run locally for production:
-npm run pi
 ```
-
-Since Vite is not intended to be used for locally hosted apps, they only provide the `preview` command for running a production build locally. This is good enough for my purposes so I use that with the --host option to expose the port to outside connections (Inside the `npm run pi` script).
 
 # TODOs
 
