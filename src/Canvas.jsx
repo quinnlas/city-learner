@@ -1,6 +1,13 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 export default function Canvas({ borders, streets, width, height }) {
+    const [showMotorway, setShowMotorway] = useState(true)
+    const [showTrunk, setShowTrunk] = useState(true)
+    const [showPrimary, setShowPrimary] = useState(true)
+    const [showSecondary, setShowSecondary] = useState(true)
+    const [showTertiary, setShowTertiary] = useState(true)
+    const [showUnclassified, setShowUnclassified] = useState(false)
+
     useEffect(() => {
         const canvas = document.getElementById("canvas")
 
@@ -58,6 +65,36 @@ export default function Canvas({ borders, streets, width, height }) {
         // draw streets
         ctx.lineWidth = 1
         for (let way of streets.ways) {
+            // determine if this street should be drawn
+            switch (way.tags && way.tags.highway) {
+                case "motorway":
+                    if (!showMotorway) continue
+                    break
+
+                case "trunk":
+                    if (!showTrunk) continue
+                    break
+
+                case "primary":
+                    if (!showPrimary) continue
+                    break
+
+                case "secondary":
+                    if (!showSecondary) continue
+                    break
+
+                case "tertiary":
+                    if (!showTertiary) continue
+                    break
+
+                case "unclassified":
+                    if (!showUnclassified) continue
+                    break
+
+                default:
+                    continue
+            }
+
             const pixels = way.nodes
                 .map((nID) => streets.nodes[nID])
                 .map(convertCoord)
@@ -72,5 +109,51 @@ export default function Canvas({ borders, streets, width, height }) {
         }
     })
 
-    return <canvas id="canvas" />
+    return (
+        <>
+            <input
+                type="checkbox"
+                checked={showMotorway}
+                onChange={(e) => setShowMotorway(e.target.checked)}
+            />
+            <label>Motorways</label>
+            <br />
+            <input
+                type="checkbox"
+                checked={showTrunk}
+                onChange={(e) => setShowTrunk(e.target.checked)}
+            />
+            <label>Trunks</label>
+            <br />
+            <input
+                type="checkbox"
+                checked={showPrimary}
+                onChange={(e) => setShowPrimary(e.target.checked)}
+            />
+            <label>Primary</label>
+            <br />
+            <input
+                type="checkbox"
+                checked={showSecondary}
+                onChange={(e) => setShowSecondary(e.target.checked)}
+            />
+            <label>Secondary</label>
+            <br />
+            <input
+                type="checkbox"
+                checked={showTertiary}
+                onChange={(e) => setShowTertiary(e.target.checked)}
+            />
+            <label>Tertiary</label>
+            <br />
+            <input
+                type="checkbox"
+                checked={showUnclassified}
+                onChange={(e) => setShowUnclassified(e.target.checked)}
+            />
+            <label>Unclassified</label>
+            <br />
+            <canvas id="canvas" />
+        </>
+    )
 }

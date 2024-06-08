@@ -65,3 +65,11 @@ Any element can have tags. "A tag is a key=value pair describing what the elemen
 ## Nominatim
 
 This is a search service that returns different useful information about the search matches. The main parts we want are the display_name, osm_type, and osm_id.
+
+## Overpass API
+
+This is a service used primarily for complex read-only querying. The main OSM API is optimized for editing. Since this project is read-only and makes complex queries filtering for area, street type, etc, we need to use the Overpass API.
+
+There are many layers to the Overpass API, but the basic idea is that you submit a query written in "Overpass QL" and get a result back. Overpass QL is documented here: https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL
+
+One important note is that there is a difference between the `out:` setting and the `out` statement in Overpass QL. `out:` controls the format of the data (this project always uses JSON) and `out` controls which data about each OSM element is provided.

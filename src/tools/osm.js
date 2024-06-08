@@ -49,7 +49,8 @@ export async function getRoads(
   area(${id + 3600000000});
   (._; )->.area;
   ${highway_values
-      .map((hv) => `(way[highway=${hv}](area.area); node(w););\nout skel;`)
+      // use default "out body" because we need the tags for ways to determine the road type later
+      .map((hv) => `(way[highway=${hv}](area.area); node(w););\nout;`)
       .join("\n")}
   `)
     )
