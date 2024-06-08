@@ -69,7 +69,7 @@ export default function CityChooser() {
             {searched && !searchResults.length ? (
                 <p>
                     No city search results were found. Please try a different
-                    search.
+                    search. Some cities do not have borders in OpenStreetMap yet.
                 </p>
             ) : (
                 <></>
