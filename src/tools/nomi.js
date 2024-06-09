@@ -41,7 +41,7 @@ export async function searchCities(searchText) {
 
         // determine if it's a city
         if (["city", "town"].includes(result.type)) return true
-        if (["city", "municipality"].includes(result.addresstype)) return true
+        if (["city", "municipality", "town", "hamlet"].includes(result.addresstype)) return true
 
         return false
     })
