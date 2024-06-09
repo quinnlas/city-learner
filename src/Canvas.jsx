@@ -117,7 +117,14 @@ export default function Canvas({ borders, streets, width, height }) {
 
     return (
         <div style={{ textAlign: "-webkit-center" }}>
-            <div style={{ textAlign: "left", width: "fit-content", border: "1px solid", padding:"5px" }}>
+            <div
+                style={{
+                    textAlign: "left",
+                    width: "fit-content",
+                    border: "1px solid",
+                    padding: "5px",
+                }}
+            >
                 <input
                     type="checkbox"
                     checked={showMotorway}
