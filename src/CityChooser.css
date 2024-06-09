@@ -1,0 +1,11 @@
+.search-result {
+  border: 1px solid;
+  padding: 10px;
+  background-color: white
+}
+
+/* needs to be after .search-result to override border rules */
+.search-result:hover {
+  border: 2px solid;
+  cursor: pointer;
+}

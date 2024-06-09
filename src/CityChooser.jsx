@@ -2,6 +2,7 @@ import { useState } from "react"
 import { searchCities } from "./tools/nomi"
 import { getCityBorders, getRoads } from "./tools/osm"
 import Canvas from "./Canvas"
+import "./CityChooser.css"
 
 export default function CityChooser() {
     const [searchText, setSearchText] = useState("")
@@ -88,11 +89,7 @@ export default function CityChooser() {
                         <li
                             key={r.place_id}
                             onClick={() => onClickResult(i)}
-                            style={{
-                                border: "1px solid",
-                                padding: "10px",
-                                backgroundColor: "white",
-                            }}
+                            className="search-result"
                         >
                             {r.display_name}
                         </li>
