@@ -17,7 +17,6 @@ npm run build
 
 # TODOs
 
--   do CSS to it
 -   connect the website to my domain name [quinnlas.com](http://quinnlas.com)
 -   tell the user the name of roads on mouseover
 -   allow the user to save roads they want to memorize
