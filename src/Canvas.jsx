@@ -29,7 +29,7 @@ export default function Canvas({ borders, streets, width, height }) {
             (borders.bounds.maxlon - borders.bounds.minlon) * kmPerDegLon
         const cityHeightKM =
             (borders.bounds.maxlat - borders.bounds.minlat) * kmPerDegLat
-        
+
         // we need the city to fit into the canvas width wise and height wise, without getting distorted
         const pxPerKM = Math.min(width / cityWidthKM, height / cityHeightKM)
         const pxPerDegLat = pxPerKM * kmPerDegLat
@@ -117,11 +117,12 @@ export default function Canvas({ borders, streets, width, height }) {
 
     return (
         <div style={{ textAlign: "-webkit-center" }}>
-            <div style={{textAlign: 'left', width: 'fit-content'}}>
+            <div style={{ textAlign: "left", width: "fit-content", border: "1px solid", padding:"5px" }}>
                 <input
                     type="checkbox"
                     checked={showMotorway}
                     onChange={(e) => setShowMotorway(e.target.checked)}
+                    style={{ marginLeft: 0 }}
                 />
                 <label>Motorways</label>
                 <br />
@@ -129,6 +130,7 @@ export default function Canvas({ borders, streets, width, height }) {
                     type="checkbox"
                     checked={showTrunk}
                     onChange={(e) => setShowTrunk(e.target.checked)}
+                    style={{ marginLeft: 0 }}
                 />
                 <label>Trunks</label>
                 <br />
@@ -136,6 +138,7 @@ export default function Canvas({ borders, streets, width, height }) {
                     type="checkbox"
                     checked={showPrimary}
                     onChange={(e) => setShowPrimary(e.target.checked)}
+                    style={{ marginLeft: 0 }}
                 />
                 <label>Primary</label>
                 <br />
@@ -143,6 +146,7 @@ export default function Canvas({ borders, streets, width, height }) {
                     type="checkbox"
                     checked={showSecondary}
                     onChange={(e) => setShowSecondary(e.target.checked)}
+                    style={{ marginLeft: 0 }}
                 />
                 <label>Secondary</label>
                 <br />
@@ -150,6 +154,7 @@ export default function Canvas({ borders, streets, width, height }) {
                     type="checkbox"
                     checked={showTertiary}
                     onChange={(e) => setShowTertiary(e.target.checked)}
+                    style={{ marginLeft: 0 }}
                 />
                 <label>Tertiary</label>
                 <br />
@@ -157,11 +162,12 @@ export default function Canvas({ borders, streets, width, height }) {
                     type="checkbox"
                     checked={showUnclassified}
                     onChange={(e) => setShowUnclassified(e.target.checked)}
+                    style={{ marginLeft: 0 }}
                 />
                 <label>Unclassified</label>
                 <br />
             </div>
-            <canvas id="canvas" style={{marginTop: '10px'}}/>
+            <canvas id="canvas" style={{ marginTop: "10px" }} />
         </div>
     )
 }
