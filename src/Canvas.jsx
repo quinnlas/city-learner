@@ -29,15 +29,21 @@ export default function Canvas({ borders, streets, width, height }) {
             (borders.bounds.maxlon - borders.bounds.minlon) * kmPerDegLon
         const cityHeightKM =
             (borders.bounds.maxlat - borders.bounds.minlat) * kmPerDegLat
+        
+        // we need the city to fit into the canvas width wise and height wise, without getting distorted
         const pxPerKM = Math.min(width / cityWidthKM, height / cityHeightKM)
         const pxPerDegLat = pxPerKM * kmPerDegLat
         const pxPerDegLon = pxPerKM * kmPerDegLon
+
+        // calculate width offset to center the map in the canvas (this will be 0 if the sizing is width-restricted)
+        const cityPxWidth = cityWidthKM * pxPerKM
+        const widthOffsetPx = (width - cityPxWidth) / 2
 
         function convertLat(lat) {
             return (borders.bounds.maxlat - lat) * pxPerDegLat
         }
         function convertLon(lon) {
-            return (lon - borders.bounds.minlon) * pxPerDegLon
+            return (lon - borders.bounds.minlon) * pxPerDegLon + widthOffsetPx
         }
         function convertCoord(coord) {
             return [convertLon(coord.lon), convertLat(coord.lat)]
