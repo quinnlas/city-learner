@@ -6,9 +6,10 @@ import Canvas from "./Canvas"
 export default function CityChooser() {
     const [searchText, setSearchText] = useState("")
     const [searchResults, setSearchResults] = useState([])
-    const [searched, setSearched] = useState(false)
+    const [showSearchResults, setShowSearchResults] = useState(false)
     const [borders, setBorders] = useState(null)
     const [streets, setStreets] = useState(null)
+    const [justStarted, setJustStarted] = useState(true)
     const [showCanvas, setShowCanvas] = useState(false)
 
     function onInput(e) {
@@ -21,10 +22,11 @@ export default function CityChooser() {
 
     async function onClickSearch() {
         setSearchResults(await searchCities(searchText))
-        setSearched(true)
+        setShowSearchResults(true)
     }
 
     async function onClickResult(i) {
+        setJustStarted(false)
         const result = searchResults[i]
 
         // get the city data from osm
@@ -35,45 +37,63 @@ export default function CityChooser() {
         const streets = await getRoads(result.osm_id)
         setStreets(streets)
         setShowCanvas(true)
+        setSearchResults([])
+        setShowSearchResults(false)
     }
 
     return (
         <>
-            <input
-                type="text"
-                placeholder="Minneapolis"
-                onInput={onInput}
-                onKeyUp={onKeyUp}
-            />
-            <button onClick={onClickSearch}>Search</button>
-            <ul
-                style={{
-                    listStyle: "none",
-                    paddingLeft: 0,
-                    width: "fit-content",
-                }}
-            >
-                {searchResults.map((r, i) => (
-                    <li
-                        key={r.place_id}
-                        onClick={() => onClickResult(i)}
+            <div style={{ textAlign: "-webkit-center"}}>
+                {justStarted ? (
+                    <div style={{marginTop:"100px"}}>
+                        <h1>City Learner</h1>
+                        <p>Enter a city to get started.</p>
+                    </div>
+                ) : (
+                    <></>
+                )}
+                <ul
+                    style={{
+                        listStyle: "none",
+                        paddingLeft: 0,
+                        width: "410px",
+                    }}
+                >
+                    <input
+                        type="text"
+                        placeholder="Minneapolis"
+                        onInput={onInput}
+                        onKeyUp={onKeyUp}
                         style={{
-                            border: "1px solid",
-                            padding: "10px",
+                            width: "410px",
+                            boxSizing: "border-box",
                         }}
-                    >
-                        {r.display_name}
-                    </li>
-                ))}
-            </ul>
-            {searched && !searchResults.length ? (
-                <p>
-                    No city search results were found. Please try a different
-                    search. Some cities do not have borders in OpenStreetMap yet.
-                </p>
-            ) : (
-                <></>
-            )}
+                    />
+                    {showSearchResults && !searchResults.length ? (
+                        <p style={{textAlign: 'left'}}>
+                            No city search results were found. Please try a different
+                            search. Some cities do not have borders in OpenStreetMap
+                            yet.
+                        </p>
+                    ) : (
+                        <></>
+                    )}
+                    {searchResults.length ? <hr /> : <></>}
+                    {searchResults.map((r, i) => (
+                        <li
+                            key={r.place_id}
+                            onClick={() => onClickResult(i)}
+                            style={{
+                                border: "1px solid",
+                                padding: "10px",
+                                backgroundColor: "white",
+                            }}
+                        >
+                            {r.display_name}
+                        </li>
+                    ))}
+                </ul>
+            </div>
             {/* TODO get starting size from viewport */}
             {/* TODO some kind of app state management */}
             {/* -10 is to avoid scrollbar, not sure exact amount needed */}
