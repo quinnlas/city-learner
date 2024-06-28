@@ -1,4 +1,4 @@
-This project helps people to learn the geography of their city (or any other city). Right now, it just displays a city map, adjusted for the curvature of the Earth, along with the major roads.
+This project helps people to learn the geography of their city (or any other city). It displays a city map, adjusted for the curvature of the Earth, along with the major roads.
 
 It is built with React and runs on Github Pages.
 
