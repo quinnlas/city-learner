@@ -19,7 +19,7 @@ export default function CityChooser() {
     }
 
     function onKeyUp(e) {
-        if (e.code == "Enter") onClickSearch()
+        if (e.key == "Enter") onClickSearch()
     }
 
     async function onClickSearch() {
