@@ -1,5 +1,15 @@
 import { useEffect, useState } from "react"
 
+function calcStreetTypes(streets) {
+    const streetTypes = {}
+    for (let way of streets.ways) {
+        if (way.tags && way.tags.highway) {
+            streetTypes[way.tags.highway] = true
+        }
+    }
+    return streetTypes
+}
+
 export default function Canvas({ borders, streets, width, height }) {
     const [showMotorway, setShowMotorway] = useState(true)
     const [showTrunk, setShowTrunk] = useState(true)
@@ -7,6 +17,8 @@ export default function Canvas({ borders, streets, width, height }) {
     const [showSecondary, setShowSecondary] = useState(true)
     const [showTertiary, setShowTertiary] = useState(true)
     const [showUnclassified, setShowUnclassified] = useState(false)
+
+    const streetTypes = calcStreetTypes(streets)
 
     useEffect(() => {
         const canvas = document.getElementById("canvas")
@@ -125,54 +137,60 @@ export default function Canvas({ borders, streets, width, height }) {
                     padding: "5px",
                 }}
             >
-                <input
-                    type="checkbox"
-                    checked={showMotorway}
-                    onChange={(e) => setShowMotorway(e.target.checked)}
-                    style={{ marginLeft: 0 }}
-                />
-                <label>Motorways</label>
-                <br />
-                <input
-                    type="checkbox"
-                    checked={showTrunk}
-                    onChange={(e) => setShowTrunk(e.target.checked)}
-                    style={{ marginLeft: 0 }}
-                />
-                <label>Trunks</label>
-                <br />
-                <input
-                    type="checkbox"
-                    checked={showPrimary}
-                    onChange={(e) => setShowPrimary(e.target.checked)}
-                    style={{ marginLeft: 0 }}
-                />
-                <label>Primary</label>
-                <br />
-                <input
-                    type="checkbox"
-                    checked={showSecondary}
-                    onChange={(e) => setShowSecondary(e.target.checked)}
-                    style={{ marginLeft: 0 }}
-                />
-                <label>Secondary</label>
-                <br />
-                <input
-                    type="checkbox"
-                    checked={showTertiary}
-                    onChange={(e) => setShowTertiary(e.target.checked)}
-                    style={{ marginLeft: 0 }}
-                />
-                <label>Tertiary</label>
-                <br />
-                <input
-                    type="checkbox"
-                    checked={showUnclassified}
-                    onChange={(e) => setShowUnclassified(e.target.checked)}
-                    style={{ marginLeft: 0 }}
-                />
-                <label>Unclassified</label>
-                <br />
+                <div style={{display: streetTypes.motorway ? '' : 'none'}}>
+                    <input
+                        type="checkbox"
+                        checked={showMotorway}
+                        onChange={(e) => setShowMotorway(e.target.checked)}
+                        style={{ marginLeft: 0 }}
+                    />
+                    <label>Motorways</label>
+                </div>
+                <div style={{display: streetTypes.trunk ? '' : 'none'}}>
+                    <input
+                        type="checkbox"
+                        checked={showTrunk}
+                        onChange={(e) => setShowTrunk(e.target.checked)}
+                        style={{ marginLeft: 0 }}
+                    />
+                    <label>Trunks</label>
+                </div>
+                <div style={{display: streetTypes.primary ? '' : 'none'}}>
+                    <input
+                        type="checkbox"
+                        checked={showPrimary}
+                        onChange={(e) => setShowPrimary(e.target.checked)}
+                        style={{ marginLeft: 0 }}
+                    />
+                    <label>Primary</label>
+                </div>
+                <div style={{display: streetTypes.secondary ? '' : 'none'}}>
+                    <input
+                        type="checkbox"
+                        checked={showSecondary}
+                        onChange={(e) => setShowSecondary(e.target.checked)}
+                        style={{ marginLeft: 0 }}
+                    />
+                    <label>Secondary</label>
+                </div>
+                <div style={{display: streetTypes.tertiary ? '' : 'none'}}>
+                    <input
+                        type="checkbox"
+                        checked={showTertiary}
+                        onChange={(e) => setShowTertiary(e.target.checked)}
+                        style={{ marginLeft: 0 }}
+                    />
+                    <label>Tertiary</label>
+                </div>
+                <div style={{display: streetTypes.unclassified ? '' : 'none'}}>
+                    <input
+                        type="checkbox"
+                        checked={showUnclassified}
+                        onChange={(e) => setShowUnclassified(e.target.checked)}
+                        style={{ marginLeft: 0 }}
+                    />
+                    <label>Unclassified</label>
+                </div>
             </div>
             <canvas id="canvas" style={{ marginTop: "10px" }} />
         </div>
