@@ -19,6 +19,7 @@ export default function Canvas({ borders, streets, width, height }) {
     const [showUnclassified, setShowUnclassified] = useState(false)
 
     const streetTypes = calcStreetTypes(streets)
+    const anyStreetsLoaded = !Object.keys(streetTypes).length
 
     useEffect(() => {
         const canvas = document.getElementById("canvas")
@@ -135,6 +136,7 @@ export default function Canvas({ borders, streets, width, height }) {
                     width: "fit-content",
                     border: "1px solid",
                     padding: "5px",
+                    display: anyStreetsLoaded ? '' : 'none'
                 }}
             >
                 <div style={{display: streetTypes.motorway ? '' : 'none'}}>
