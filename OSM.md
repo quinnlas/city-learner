@@ -52,11 +52,11 @@ Since a city is an area, they are especially important to this project.
 An area can be represented multiple ways. It is not an element type.
 
 -   Way - If an area can be represented by one polygon, it can be a closed way. Most closed ways are areas (the exception would be something like a roundabout, where the region inside the loop is not important). Determining if a closed way is an area or not is not important for this project.
--   Relation - Commonly called "multipolygon". These contain exclusively ways. The ways can be "outer" or "inner", since areas can have holes in them. For our purposes, we can probably ignore inner areas.
+-   Relation - Commonly called "multipolygon". These contain exclusively ways. The ways can be "outer" or "inner", since areas can have holes in them (e.g. Vatican City in Rome). For our purposes, we can probably ignore inner areas.
 
 ### IDs
 
-Each element type has its own type of ID, which is unique within that element type. So a node and a way can have the same ID, for example, but two nodes will have different IDs. Since closed ways and areas all still have the element type "way", they have unique IDs from each other.
+Each element type has its own type of ID, which is unique within that element type. So a node and a way can have the same ID, for example, but two nodes will have different IDs.
 
 ### Tags
 
