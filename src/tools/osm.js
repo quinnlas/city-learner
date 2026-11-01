@@ -45,20 +45,33 @@ export async function getRoads(
     "unclassified",
   ]
 ) {
-  // add 3600000000 to get the area id: https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL#By_area_.28area.29
-  const res = await osm.post(
-    "/interpreter",
-    "data=" +
-      encodeURIComponent(`
-  [timeout:900][maxsize:1073741824][out:json];
-  area(${id + 3600000000});
-  (._; )->.area;
-  ${highway_values
-    // use default "out body" because we need the tags for ways to determine the road type later
-    .map((hv) => `(way[highway=${hv}](area.area); node(w););\nout;`)
-    .join("\n")}
-  `)
-  )
+  const streetData = []
+
+  // separate requests for each type to avoid server overload
+
+  for (let highway_type of highway_values) {
+    try {
+      await new Promise((rs) => setTimeout(rs, 1000))
+
+      // add 3600000000 to get the area id: https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL#By_area_.28area.29
+      const res = await osm.post(
+        "/interpreter",
+        "data=" +
+          encodeURIComponent(`
+      [timeout:900][maxsize:1073741824][out:json];
+      area(${id + 3600000000});
+      (._; )->.area;
+      (way[highway=${highway_type}](area.area); node(w););
+      out;
+      `)
+      )
+
+      streetData.push(...res.data.elements)
+    } catch (e) {
+      console.error(e)
+      console.error(`Failed to get data for highway type ${highway_type}. Other types may succeed.`)
+    }
+  }
 
   // the streets data is an array with a bunch of nodes and ways:
   // we want to process this efficiently before sending it to another component
@@ -86,8 +99,7 @@ export async function getRoads(
             "lon": -93.2739607
         }
     ]
-    */
-  const streetData = res.data.elements
+  */
   const ways = []
   const nodes = {}
 

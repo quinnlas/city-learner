@@ -12,7 +12,7 @@ export default function CityChooser() {
     const [streets, setStreets] = useState(null)
     const [justStarted, setJustStarted] = useState(true)
     const [showCanvas, setShowCanvas] = useState(false)
-    const [showLoading, setShowLoading] = useState(false)
+    const [loadingMessage, setLoadingMessage] = useState('')
 
     function onInput(e) {
         setSearchText(e.target.value)
@@ -23,9 +23,9 @@ export default function CityChooser() {
     }
 
     async function onClickSearch() {
-        setShowLoading(true)
+        setLoadingMessage("Loading search results...")
         setSearchResults(await searchCities(searchText))
-        setShowLoading(false)
+        setLoadingMessage("")
         setShowSearchResults(true)
     }
 
@@ -34,17 +34,22 @@ export default function CityChooser() {
         const result = searchResults[i]
 
         // get the city data from osm
-        setShowLoading(true)
-        const borderRes = await getCityBorders(result.osm_id)
-        setBorders(borderRes.data.elements[0])
-
-        await new Promise((rs) => setTimeout(rs, 1000))
-        const streets = await getRoads(result.osm_id)
-        setShowLoading(false)
-        setStreets(streets)
-        setShowCanvas(true)
-        setSearchResults([])
-        setShowSearchResults(false)
+        setLoadingMessage("Loading city borders (this could take awhile)...")
+        try {
+            const borderRes = await getCityBorders(result.osm_id)
+            setBorders(borderRes.data.elements[0])
+            
+            setLoadingMessage("Loading city streets (this could take awhile)...")
+            const streets = await getRoads(result.osm_id)
+            setLoadingMessage("")
+            setStreets(streets)
+            setShowCanvas(true)
+            setSearchResults([])
+            setShowSearchResults(false)
+        } catch (e) {
+            console.error(e)
+            setLoadingMessage("Request failed. The API is probably too busy to handle this request. Consider donating at: https://www.fossgis.de/")
+        }
     }
 
     return (
@@ -95,6 +100,13 @@ export default function CityChooser() {
                         </li>
                     ))}
                 </ul>
+                {loadingMessage ? (
+                    <div>
+                        {loadingMessage}
+                    </div>
+                ) : (
+                    <></>
+                )}
             </div>
             {/* TODO get starting size from viewport */}
             {/* TODO some kind of app state management */}
@@ -106,13 +118,6 @@ export default function CityChooser() {
                     width={1440 - 40 * 2 - 32 * 2}
                     height={843 - 32 * 2 - 10}
                 />
-            ) : (
-                <></>
-            )}
-            {showLoading ? (
-                <div style={{ position: "fixed", bottom: "8px" }}>
-                    Loading...
-                </div>
             ) : (
                 <></>
             )}
