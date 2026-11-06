@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react"
 
 export default function Canvas({ borders, streets, width, height }) {
-    const [showMotorway, setShowMotorway] = useState(true)
-    const [showTrunk, setShowTrunk] = useState(true)
-    const [showPrimary, setShowPrimary] = useState(true)
-    const [showSecondary, setShowSecondary] = useState(true)
-    const [showTertiary, setShowTertiary] = useState(true)
-    const [showUnclassified, setShowUnclassified] = useState(false)
+    const initialTypesShown = {}
+    
+    Object.keys(streets).forEach(t => initialTypesShown[t] = !['footway', 'service'].includes(t))
 
-    const anyStreetsLoaded = !!Object.keys(streets).length
+    const [typesShown, setTypesShown] = useState(initialTypesShown)
 
     useEffect(() => {
         const canvas = document.getElementById("canvas")
@@ -74,34 +71,7 @@ export default function Canvas({ borders, streets, width, height }) {
         ctx.lineWidth = 1
         for (let key in streets) {
             // determine if this street should be drawn
-            switch (key) {
-                case "motorway":
-                    if (!showMotorway) continue
-                    break
-
-                case "trunk":
-                    if (!showTrunk) continue
-                    break
-
-                case "primary":
-                    if (!showPrimary) continue
-                    break
-
-                case "secondary":
-                    if (!showSecondary) continue
-                    break
-
-                case "tertiary":
-                    if (!showTertiary) continue
-                    break
-
-                case "unclassified":
-                    if (!showUnclassified) continue
-                    break
-
-                default:
-                    continue
-            }
+            if (!typesShown[key]) continue
 
             for (let way of streets[key]) {
                 const pixels = way.geometry
@@ -126,63 +96,17 @@ export default function Canvas({ borders, streets, width, height }) {
                     width: "fit-content",
                     border: "1px solid",
                     padding: "5px",
-                    display: anyStreetsLoaded ? '' : 'none'
                 }}
             >
-                <div style={{display: streets.motorway ? '' : 'none'}}>
+                {Object.keys(streets).sort().map(t => (<div key={t}>
                     <input
                         type="checkbox"
-                        checked={showMotorway}
-                        onChange={(e) => setShowMotorway(e.target.checked)}
+                        checked={typesShown[t]}
+                        onChange={(e) => setTypesShown({...typesShown, [t]: e.target.checked})}
                         style={{ marginLeft: 0 }}
                     />
-                    <label>Motorways</label>
-                </div>
-                <div style={{display: streets.trunk ? '' : 'none'}}>
-                    <input
-                        type="checkbox"
-                        checked={showTrunk}
-                        onChange={(e) => setShowTrunk(e.target.checked)}
-                        style={{ marginLeft: 0 }}
-                    />
-                    <label>Trunks</label>
-                </div>
-                <div style={{display: streets.primary ? '' : 'none'}}>
-                    <input
-                        type="checkbox"
-                        checked={showPrimary}
-                        onChange={(e) => setShowPrimary(e.target.checked)}
-                        style={{ marginLeft: 0 }}
-                    />
-                    <label>Primary</label>
-                </div>
-                <div style={{display: streets.secondary ? '' : 'none'}}>
-                    <input
-                        type="checkbox"
-                        checked={showSecondary}
-                        onChange={(e) => setShowSecondary(e.target.checked)}
-                        style={{ marginLeft: 0 }}
-                    />
-                    <label>Secondary</label>
-                </div>
-                <div style={{display: streets.tertiary ? '' : 'none'}}>
-                    <input
-                        type="checkbox"
-                        checked={showTertiary}
-                        onChange={(e) => setShowTertiary(e.target.checked)}
-                        style={{ marginLeft: 0 }}
-                    />
-                    <label>Tertiary</label>
-                </div>
-                <div style={{display: streets.unclassified ? '' : 'none'}}>
-                    <input
-                        type="checkbox"
-                        checked={showUnclassified}
-                        onChange={(e) => setShowUnclassified(e.target.checked)}
-                        style={{ marginLeft: 0 }}
-                    />
-                    <label>Unclassified</label>
-                </div>
+                    <label>{t}</label>
+                </div>))}
             </div>
             <canvas id="canvas" style={{ marginTop: "10px" }} />
         </div>

@@ -17,12 +17,20 @@ npm run build
 
 # TODOs
 
+## Full Stack Conversion
+- config for backend URL
+- implement areas
+
+## General
+
 -   connect the website to my domain name [quinnlas.com](http://quinnlas.com)
 -   tell the user the name of roads on mouseover
 -   allow the user to save roads they want to memorize
 -   check the user's knowledge of their saved roads according to a spaced repetition algorithm
 -   potentially a nicer display option than canvas such as WebGL
 -   various code TODO comments
+
+<hr>
 
 Following is the README for the React + Vite template:
 
