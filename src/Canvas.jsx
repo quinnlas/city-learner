@@ -1,15 +1,5 @@
 import { useEffect, useState } from "react"
 
-function calcStreetTypes(streets) {
-    const streetTypes = {}
-    for (let way of streets.ways) {
-        if (way.tags && way.tags.highway) {
-            streetTypes[way.tags.highway] = true
-        }
-    }
-    return streetTypes
-}
-
 export default function Canvas({ borders, streets, width, height }) {
     const [showMotorway, setShowMotorway] = useState(true)
     const [showTrunk, setShowTrunk] = useState(true)
@@ -18,8 +8,7 @@ export default function Canvas({ borders, streets, width, height }) {
     const [showTertiary, setShowTertiary] = useState(true)
     const [showUnclassified, setShowUnclassified] = useState(false)
 
-    const streetTypes = calcStreetTypes(streets)
-    const anyStreetsLoaded = !Object.keys(streetTypes).length
+    const anyStreetsLoaded = !!Object.keys(streets).length
 
     useEffect(() => {
         const canvas = document.getElementById("canvas")
@@ -83,9 +72,9 @@ export default function Canvas({ borders, streets, width, height }) {
 
         // draw streets
         ctx.lineWidth = 1
-        for (let way of streets.ways) {
+        for (let key in streets) {
             // determine if this street should be drawn
-            switch (way.tags && way.tags.highway) {
+            switch (key) {
                 case "motorway":
                     if (!showMotorway) continue
                     break
@@ -114,17 +103,18 @@ export default function Canvas({ borders, streets, width, height }) {
                     continue
             }
 
-            const pixels = way.nodes
-                .map((nID) => streets.nodes[nID])
-                .map(convertCoord)
-            pixels.slice(1).forEach((p2, i) => {
-                const p1 = pixels[i]
-                // draw line seg between p1 and p2
-                ctx.beginPath()
-                ctx.moveTo(...p1)
-                ctx.lineTo(...p2)
-                ctx.stroke()
-            })
+            for (let way of streets[key]) {
+                const pixels = way.geometry
+                    .map(convertCoord)
+                pixels.slice(1).forEach((p2, i) => {
+                    const p1 = pixels[i]
+                    // draw line seg between p1 and p2
+                    ctx.beginPath()
+                    ctx.moveTo(...p1)
+                    ctx.lineTo(...p2)
+                    ctx.stroke()
+                })
+            }
         }
     })
 
@@ -139,7 +129,7 @@ export default function Canvas({ borders, streets, width, height }) {
                     display: anyStreetsLoaded ? '' : 'none'
                 }}
             >
-                <div style={{display: streetTypes.motorway ? '' : 'none'}}>
+                <div style={{display: streets.motorway ? '' : 'none'}}>
                     <input
                         type="checkbox"
                         checked={showMotorway}
@@ -148,7 +138,7 @@ export default function Canvas({ borders, streets, width, height }) {
                     />
                     <label>Motorways</label>
                 </div>
-                <div style={{display: streetTypes.trunk ? '' : 'none'}}>
+                <div style={{display: streets.trunk ? '' : 'none'}}>
                     <input
                         type="checkbox"
                         checked={showTrunk}
@@ -157,7 +147,7 @@ export default function Canvas({ borders, streets, width, height }) {
                     />
                     <label>Trunks</label>
                 </div>
-                <div style={{display: streetTypes.primary ? '' : 'none'}}>
+                <div style={{display: streets.primary ? '' : 'none'}}>
                     <input
                         type="checkbox"
                         checked={showPrimary}
@@ -166,7 +156,7 @@ export default function Canvas({ borders, streets, width, height }) {
                     />
                     <label>Primary</label>
                 </div>
-                <div style={{display: streetTypes.secondary ? '' : 'none'}}>
+                <div style={{display: streets.secondary ? '' : 'none'}}>
                     <input
                         type="checkbox"
                         checked={showSecondary}
@@ -175,7 +165,7 @@ export default function Canvas({ borders, streets, width, height }) {
                     />
                     <label>Secondary</label>
                 </div>
-                <div style={{display: streetTypes.tertiary ? '' : 'none'}}>
+                <div style={{display: streets.tertiary ? '' : 'none'}}>
                     <input
                         type="checkbox"
                         checked={showTertiary}
@@ -184,7 +174,7 @@ export default function Canvas({ borders, streets, width, height }) {
                     />
                     <label>Tertiary</label>
                 </div>
-                <div style={{display: streetTypes.unclassified ? '' : 'none'}}>
+                <div style={{display: streets.unclassified ? '' : 'none'}}>
                     <input
                         type="checkbox"
                         checked={showUnclassified}

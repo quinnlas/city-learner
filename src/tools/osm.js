@@ -27,11 +27,76 @@ export function getCityBorders(id) {
     "/interpreter",
     "data=" +
       encodeURIComponent(`
-  [out:json][timeout:900];
+  [out:json][timeout:25];
   rel(${id});
   out geom;
   `)
   )
+}
+
+function processRoad(roadObj) {
+  // mutates and returns
+  /*
+  {
+    "type": "way",
+    "id": 6020639,
+    "bounds": {
+      "minlat": {
+        "source": "44.9681870",
+        "parsedValue": 44.968187
+      },
+      "minlon": -93.2553634,
+      "maxlat": {
+        "source": "44.9684220",
+        "parsedValue": 44.968422
+      },
+      "maxlon": -93.2548204
+    },
+    "nodes": [
+      33639864,
+      8355194047,
+      595907012
+    ],
+    "geometry": [
+      {
+        "lat": {
+          "source": "44.9684220",
+          "parsedValue": 44.968422
+        },
+        "lon": -93.2553634
+      },
+      {
+        "lat": {
+          "source": "44.9683880",
+          "parsedValue": 44.968388
+        },
+        "lon": -93.2552892
+      },
+      {
+        "lat": {
+          "source": "44.9681870",
+          "parsedValue": 44.968187
+        },
+        "lon": -93.2548204
+      }
+    ],
+    "tags": {
+      "highway": "motorway",
+      "lanes": "2",
+      "maxspeed": "45 mph",
+      "name": "South 8th Street",
+      "noref": "yes",
+      "oneway": "yes"
+    }
+  }
+  */
+
+  roadObj.bounds.minlat = roadObj.bounds.minlat.parsedValue
+  roadObj.bounds.maxlat = roadObj.bounds.maxlat.parsedValue
+  roadObj.geometry.forEach(n => n.lat = n.lat.parsedValue)
+
+  // mutates and returns
+  return roadObj
 }
 
 export async function getRoads(
@@ -45,7 +110,7 @@ export async function getRoads(
     "unclassified",
   ]
 ) {
-  const streetData = []
+  const streetData = {}
 
   // separate requests for each type to avoid server overload
 
@@ -58,59 +123,20 @@ export async function getRoads(
         "/interpreter",
         "data=" +
           encodeURIComponent(`
-      [timeout:900][maxsize:1073741824][out:json];
-      area(${id + 3600000000});
-      (._; )->.area;
-      (way[highway=${highway_type}](area.area); node(w););
+      [timeout:25][out:json];
+      area(${id + 3600000000})->.searchArea;
+      way["highway"="${highway_type}"](area.searchArea);
       out;
       `)
       )
 
-      streetData.push(...res.data.elements)
+      // process into a better format
+      streetData[highway_type] = res.data.elements.map(processRoad)
     } catch (e) {
       console.error(e)
       console.error(`Failed to get data for highway type ${highway_type}. Other types may succeed.`)
     }
   }
 
-  // the streets data is an array with a bunch of nodes and ways:
-  // we want to process this efficiently before sending it to another component
-  // by putting the nodes into an object for O(1) lookups
-  /*
-    [
-        {
-            "type": "way",
-            "id": 1289153991,
-            "nodes": [
-                7949762772,
-                11954064929
-            ]
-        },
-        {
-            "type": "node",
-            "id": 7949762772,
-            "lat": 44.9360219,
-            "lon": -93.2739399
-        },
-        {
-            "type": "node",
-            "id": 11954064929,
-            "lat": 44.9360029,
-            "lon": -93.2739607
-        }
-    ]
-  */
-  const ways = []
-  const nodes = {}
-
-  while (streetData.length) {
-    const current = streetData.pop()
-    if (current.type == "node") {
-      nodes[current.id] = current
-    } else if (current.type == "way") {
-      ways.push(current)
-    }
-  }
-
-  return { ways, nodes }
+  return streetData
 }
