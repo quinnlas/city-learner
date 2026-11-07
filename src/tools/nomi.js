@@ -37,9 +37,6 @@ export async function searchCities(searchText) {
         // determine if it's a city
         if (!["city", "town"].includes(result.type) && !["city", "municipality", "town", "hamlet"].includes(result.addresstype)) return false
 
-        // determine if it's in MN
-        if (!result.display_name.includes('Minnesota')) return false
-
         return true
     })
 }

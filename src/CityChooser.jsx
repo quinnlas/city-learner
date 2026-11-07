@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { searchCities } from "./tools/nomi"
-import { getCityBorders, getRoads } from "./tools/osm"
+import { getCityBorders, getRoadsInArea, getRoadsInBBox } from "./tools/osm"
 import Canvas from "./Canvas"
 import "./CityChooser.css"
 
@@ -34,23 +34,55 @@ export default function CityChooser() {
         setJustStarted(false)
         const result = searchResults[i]
 
-        // get the city data from osm
-        setLoadingMessage("Loading city borders (this could take awhile)...")
-        try {
-            const borderRes = await getCityBorders(result.name)
-            setBorders(borderRes.data.elements[0])
-            
-            setLoadingMessage("Loading city streets (this could take awhile)...")
-            const streets = await getRoads(result.boundingbox)
-            setLoadingMessage("")
-            setStreets(streets)
-            setCityID(result.osm_id)
-            setShowCanvas(true)
-            setSearchResults([])
-            setShowSearchResults(false)
-        } catch (e) {
-            console.error(e)
-            setLoadingMessage("Request failed.")
+        const hasBorders = result.osm_type === 'relation'
+
+        if (hasBorders) {
+            try {
+                // get borders
+                setLoadingMessage("Loading city borders (this could take awhile)...")
+                const borderRes = await getCityBorders(result.osm_id)
+                setBorders(borderRes.data.elements[0])
+                
+                // get road data by area
+                setLoadingMessage("Loading city streets (this could take awhile)...")
+                const streets = await getRoadsInArea(result.osm_id)
+                setLoadingMessage("")
+                setStreets(streets)
+                setCityID(result.osm_id)
+                setShowCanvas(true)
+                setSearchResults([])
+                setShowSearchResults(false)
+            } catch (e) {
+                console.error(e)
+                setLoadingMessage("Request failed.")
+            }
+        } else {
+            try {
+                // no borders
+                setBorders({
+                    bounds: {
+                        minlat: Number.parseFloat(result.boundingbox[0]),
+                        maxlat: Number.parseFloat(result.boundingbox[1]),
+                        minlon: Number.parseFloat(result.boundingbox[2]),
+                        maxlon: Number.parseFloat(result.boundingbox[3])
+                    },
+                    members: []
+                })
+
+                // get road data by bbox
+                setLoadingMessage("Loading city streets (this could take awhile)...")
+                const streets = await getRoadsInBBox(result.boundingbox)
+                setLoadingMessage("")
+                setStreets(streets)
+                setCityID(result.osm_id)
+                setShowCanvas(true)
+                setSearchResults([])
+                setShowSearchResults(false)
+                setLoadingMessage("This city does not have border data. Displaying roads in the bounding box.")
+            } catch (e) {
+                console.error(e)
+                setLoadingMessage("Request failed.")
+            }
         }
     }
 
@@ -59,8 +91,8 @@ export default function CityChooser() {
             <div style={{ textAlign: "-webkit-center" }}>
                 {justStarted ? (
                     <div style={{ marginTop: "100px" }}>
-                        <h1>City Learner MN</h1>
-                        <p>Enter a city in Minnesota to get started.</p>
+                        <h1>City Learner</h1>
+                        <p>Enter a city to get started.</p>
                     </div>
                 ) : (
                     <></>
