@@ -13,6 +13,9 @@ npm run dev
 
 # Build for production:
 npm run build
+
+# you will also need to set up a .env file for the production environment:
+# https://vite.dev/guide/env-and-mode
 ```
 
 # TODOs
@@ -23,6 +26,8 @@ npm run build
 -   check the user's knowledge of their saved roads according to a spaced repetition algorithm
 -   potentially a nicer display option than canvas such as WebGL
 -   various code TODO comments
+
+<hr>
 
 Following is the README for the React + Vite template:
 

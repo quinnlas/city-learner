@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { searchCities } from "./tools/nomi"
-import { getCityBorders, getRoads } from "./tools/osm"
+import { getCityBorders, getRoadsInArea, getRoadsInBBox } from "./tools/osm"
 import Canvas from "./Canvas"
 import "./CityChooser.css"
 
@@ -13,6 +13,7 @@ export default function CityChooser() {
     const [justStarted, setJustStarted] = useState(true)
     const [showCanvas, setShowCanvas] = useState(false)
     const [loadingMessage, setLoadingMessage] = useState('')
+    const [cityID, setCityID] = useState(0)
 
     function onInput(e) {
         setSearchText(e.target.value)
@@ -33,22 +34,55 @@ export default function CityChooser() {
         setJustStarted(false)
         const result = searchResults[i]
 
-        // get the city data from osm
-        setLoadingMessage("Loading city borders (this could take awhile)...")
-        try {
-            const borderRes = await getCityBorders(result.osm_id)
-            setBorders(borderRes.data.elements[0])
-            
-            setLoadingMessage("Loading city streets (this could take awhile)...")
-            const streets = await getRoads(result.osm_id)
-            setLoadingMessage("")
-            setStreets(streets)
-            setShowCanvas(true)
-            setSearchResults([])
-            setShowSearchResults(false)
-        } catch (e) {
-            console.error(e)
-            setLoadingMessage("Request failed. The API is probably too busy to handle this request. Consider donating at: https://www.fossgis.de/")
+        const hasBorders = result.osm_type === 'relation'
+
+        if (hasBorders) {
+            try {
+                // get borders
+                setLoadingMessage("Loading city borders (this could take awhile)...")
+                const borderRes = await getCityBorders(result.osm_id)
+                setBorders(borderRes.data.elements[0])
+                
+                // get road data by area
+                setLoadingMessage("Loading city streets (this could take awhile)...")
+                const streets = await getRoadsInArea(result.osm_id)
+                setLoadingMessage("")
+                setStreets(streets)
+                setCityID(result.osm_id)
+                setShowCanvas(true)
+                setSearchResults([])
+                setShowSearchResults(false)
+            } catch (e) {
+                console.error(e)
+                setLoadingMessage("Request failed.")
+            }
+        } else {
+            try {
+                // no borders
+                setBorders({
+                    bounds: {
+                        minlat: Number.parseFloat(result.boundingbox[0]),
+                        maxlat: Number.parseFloat(result.boundingbox[1]),
+                        minlon: Number.parseFloat(result.boundingbox[2]),
+                        maxlon: Number.parseFloat(result.boundingbox[3])
+                    },
+                    members: []
+                })
+
+                // get road data by bbox
+                setLoadingMessage("Loading city streets (this could take awhile)...")
+                const streets = await getRoadsInBBox(result.boundingbox)
+                setLoadingMessage("")
+                setStreets(streets)
+                setCityID(result.osm_id)
+                setShowCanvas(true)
+                setSearchResults([])
+                setShowSearchResults(false)
+                setLoadingMessage("This city does not have border data. Displaying roads in the bounding box.")
+            } catch (e) {
+                console.error(e)
+                setLoadingMessage("Request failed.")
+            }
         }
     }
 
@@ -83,8 +117,7 @@ export default function CityChooser() {
                     {showSearchResults && !searchResults.length ? (
                         <p style={{ textAlign: "left" }}>
                             No city search results were found. Please try a
-                            different search. Some cities do not have borders in
-                            OpenStreetMap yet.
+                            different search.
                         </p>
                     ) : (
                         <></>
@@ -111,8 +144,10 @@ export default function CityChooser() {
             {/* TODO get starting size from viewport */}
             {/* TODO some kind of app state management */}
             {/* -10 is to avoid scrollbar, not sure exact amount needed */}
+            {/* key is used to reset the component for new cities and avoid bugginess */}
             {showCanvas ? (
                 <Canvas
+                    key={cityID}
                     borders={borders}
                     streets={streets}
                     width={1440 - 40 * 2 - 32 * 2}
