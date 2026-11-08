@@ -13,15 +13,12 @@ npm run dev
 
 # Build for production:
 npm run build
+
+# you will also need to set up a .env file for the production environment:
+# https://vite.dev/guide/env-and-mode
 ```
 
 # TODOs
-
-## Full Stack Conversion
-- config for backend URL
-- implement areas
-
-## General
 
 -   connect the website to my domain name [quinnlas.com](http://quinnlas.com)
 -   tell the user the name of roads on mouseover

@@ -3,7 +3,7 @@
 import Axios from "axios"
 
 const osm = Axios.create({
-  baseURL: "http://localhost:3000"
+  baseURL: import.meta.env.VITE_BACKEND_URL
 })
 
 export function getCityBorders(relID) {
