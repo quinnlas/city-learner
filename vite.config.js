@@ -7,6 +7,6 @@ export default defineConfig({
 
     // https://vitejs.dev/guide/static-deploy.html#github-pages
     // this should be the repo name
-    base: '/city-learner/',
+    base: '/',
     envDir: '.'
 })

@@ -1,6 +1,8 @@
 This project helps people to learn the geography of their city (or any other city). It displays a city map, adjusted for the curvature of the Earth, along with the major roads.
 
-It is built with React and runs on Github Pages.
+It is built with React and OpenStreetMap. Try it here:
+
+https://city.quinnlas.com
 
 # Commands
 
@@ -13,14 +15,11 @@ npm run dev
 
 # Build for production:
 npm run build
-
-# you will also need to set up a .env file for the production environment:
-# https://vite.dev/guide/env-and-mode
 ```
 
 # TODOs
 
--   connect the website to my domain name [quinnlas.com](http://quinnlas.com)
+-   Github Actions pipeline to deploy to my website
 -   tell the user the name of roads on mouseover
 -   allow the user to save roads they want to memorize
 -   check the user's knowledge of their saved roads according to a spaced repetition algorithm
