@@ -89,10 +89,11 @@ export default function Canvas({ borders, streets, width, height }) {
     })
 
     return (
-        <div style={{ textAlign: "-webkit-center" }}>
+        <div style={{ textAlign: "-webkit-center", display: 'flex' }}>
             <div
                 style={{
                     textAlign: "left",
+                    height: "fit-content",
                     width: "fit-content",
                     border: "1px solid",
                     padding: "5px",
